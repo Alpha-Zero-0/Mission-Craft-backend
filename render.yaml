@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mission-craft-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGO_URI
+        value: <your MongoDB Atlas URI>
+      - key: JWT_SECRET
+        value: <your secret>
