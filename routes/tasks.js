@@ -18,7 +18,6 @@ const authMiddleware = (req, res, next) => {
 };
 
 // Save all tasks
-
 router.post("/save", authMiddleware, async (req, res) => {
   const { tasks, date } = req.body;
 
@@ -26,17 +25,19 @@ router.post("/save", authMiddleware, async (req, res) => {
     // Remove old tasks for the same user + date
     await Task.deleteMany({ userId: req.user.id, date });
 
-    // Insert all new tasks
+    // Insert all new tasks with completed field
     const newTasks = tasks.map((t) => ({
       userId: req.user.id,
       name: t.name,
       time: t.time,
+      completed: t.completed || false, // ✅ Save completed status too
       date,
     }));
 
     await Task.insertMany(newTasks);
     res.json({ message: "Tasks saved successfully" });
   } catch (err) {
+    console.error("❌ Error saving tasks:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -57,6 +58,5 @@ router.get("/:date", authMiddleware, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
